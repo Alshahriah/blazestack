@@ -1,0 +1,6 @@
+# Source — only dist/ is needed
+src/
+tsconfig.json
+
+# Dev artifacts
+*.log

@@ -136,29 +136,40 @@ function download(url: string, dest: string): Promise<void> {
   });
 }
 
-async function main() {
-  const name = process.argv[2];
+function dirExists(p: string): boolean {
+  try {
+    statSync(p);
+    return true;
+  } catch {
+    return false;
+  }
+}
 
-  if (!name) {
-    console.error("Usage: npx create-blaze <project-name>");
+async function main() {
+  const input = process.argv[2];
+  const DEFAULT_NAME = "my-blazestack-app";
+
+  const rawName = input ?? DEFAULT_NAME;
+  const baseName = sanitizeName(rawName);
+
+  if (!baseName) {
+    console.error(`Invalid project name: "${rawName}"`);
     process.exit(1);
   }
 
-  const safeName = sanitizeName(name);
-  if (!safeName) {
-    console.error(`Invalid project name: "${name}"`);
-    process.exit(1);
+  // If directory exists, append incrementing number
+  let safeName = baseName;
+  let counter = 1;
+  while (dirExists(join(process.cwd(), safeName))) {
+    safeName = `${baseName}-${counter}`;
+    counter++;
+  }
+
+  if (safeName !== baseName) {
+    console.log(`\n  "${baseName}" already exists — using "${safeName}" instead.`);
   }
 
   const targetDir = join(process.cwd(), safeName);
-
-  try {
-    statSync(targetDir);
-    console.error(`Directory "${safeName}" already exists.`);
-    process.exit(1);
-  } catch {
-    // Expected — directory doesn't exist yet
-  }
 
   const tarUrl = `https://codeload.github.com/${REPO_OWNER}/${REPO_NAME}/tar.gz/refs/heads/${REPO_BRANCH}`;
   const tmpFile = join(tmpdir(), `create-blaze-${Date.now()}.tar.gz`);

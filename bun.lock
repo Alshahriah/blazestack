@@ -116,7 +116,7 @@
     },
     "packages/create-blaze": {
       "name": "create-blaze",
-      "version": "0.2.0",
+      "version": "0.3.0",
       "bin": {
         "create-blaze": "./dist/index.js",
       },

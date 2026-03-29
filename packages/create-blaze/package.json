@@ -1,6 +1,6 @@
 {
   "name": "create-blaze",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "Create a new blazestack project",
   "keywords": [
     "blazestack",
@@ -20,6 +20,10 @@
   },
   "license": "MIT",
   "type": "module",
+  "files": [
+    "dist",
+    "README.md"
+  ],
   "bin": {
     "create-blaze": "dist/index.js"
   },

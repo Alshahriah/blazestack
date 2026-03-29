@@ -11,7 +11,7 @@ Thank you for your interest in contributing.
 ## Setup
 
 ```bash
-git clone https://github.com/your-org/blazestack.git
+git clone https://github.com/Alshahriah/blazestack.git
 cd blazestack
 bun install
 bunx lefthook install

@@ -17,9 +17,21 @@ import { extract } from "tar";
 const REPO_OWNER = "Alshahriah";
 const REPO_NAME = "blazestack";
 const REPO_BRANCH = "main";
-const VERSION = "0.2.0";
+const VERSION = "0.3.0";
 
-const EXCLUDE = new Set(["node_modules", ".git", "bun.lock", "packages/create-blaze"]);
+const EXCLUDE = new Set([
+  "node_modules",
+  ".git",
+  "bun.lock",
+  "packages/create-blaze",
+  "docs",
+  "assets",
+  ".vscode",
+  "scripts",
+  "CODE_OF_CONDUCT.md",
+  "CONTRIBUTING.md",
+  "README.md", // replaced with a project-specific one
+]);
 const EXCLUDE_FILES = new Set([".github/workflows/publish.yml"]);
 
 const TEXT_EXTENSIONS = new Set([
@@ -136,6 +148,65 @@ function download(url: string, dest: string): Promise<void> {
   });
 }
 
+function generateReadme(name: string): string {
+  return `# ${name}
+
+Scaffolded with [create-blaze](https://github.com/Alshahriah/blazestack) — a full-stack Bun monorepo with end-to-end type safety.
+
+## Stack
+
+- **API** — Hono on Cloudflare Workers
+- **Web** — React Router v7 SSR on Cloudflare Workers
+- **Mobile** — Expo SDK 55 (iOS + Android)
+- **Auth** — Better Auth
+- **Database** — Drizzle ORM + PostgreSQL
+- **RPC** — tRPC v11 (no codegen)
+
+## Getting started
+
+\`\`\`bash
+bun install
+cp apps/api/.dev.vars.example apps/api/.dev.vars
+# Fill in DATABASE_URL, BETTER_AUTH_SECRET, BETTER_AUTH_URL
+
+bun db:setup && bun db:generate && bun db:migrate
+
+bun dev:api   # API  → http://localhost:8787
+bun dev:web   # Web  → http://localhost:5173
+bun dev:mobile # Mobile (optional)
+\`\`\`
+
+## Structure
+
+\`\`\`
+${name}/
+├── apps/
+│   ├── api/       Hono API — auth + tRPC
+│   ├── web/       React Router v7 SSR
+│   └── mobile/    Expo — iOS + Android
+└── packages/
+    ├── auth/      Better Auth factory
+    ├── db/        Drizzle schema + migrations
+    ├── env/       Zod-validated env vars
+    ├── trpc/      Shared tRPC router
+    └── ui/        Shared components (web + native)
+\`\`\`
+
+## Commands
+
+\`\`\`bash
+bun dev:api          # Start API
+bun dev:web          # Start web app
+bun dev:mobile       # Start mobile app
+bun db:generate      # Generate migrations
+bun db:migrate       # Run migrations
+bun db:studio        # Open Drizzle Studio
+bun lint             # Lint check
+bun lint:fix         # Auto-fix lint
+\`\`\`
+`;
+}
+
 function dirExists(p: string): boolean {
   try {
     statSync(p);
@@ -237,6 +308,9 @@ async function main() {
       }
     }
     stepDone();
+
+    // Write project-specific README
+    writeFileSync(join(targetDir, "README.md"), generateReadme(safeName), "utf8");
   } catch (err) {
     stepFail();
     throw err;

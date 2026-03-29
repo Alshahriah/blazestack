@@ -1,0 +1,31 @@
+# Dependencies
+node_modules/
+.yarn/
+
+# Build outputs
+dist/
+.next/
+.expo/
+.wrangler/
+out/
+build/
+
+# Environment
+.env
+.env.local
+.env.*.local
+.dev.vars
+
+# Cloudflare generated
+wrangler.toml.bak
+apps/web/worker-configuration.d.ts
+
+# Bun lockfile (old binary format — bun.lock is the new text format and should be committed)
+bun.lockb
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Claude
+.claude/

@@ -1,0 +1,10 @@
+{
+  "recommendations": [
+    "biomejs.biome",
+    "bradlc.vscode-tailwindcss",
+    "drizzle-team.drizzle-vscode",
+    "expo.vscode-expo-tools",
+    "ms-vscode.vscode-typescript-next",
+    "unifiedjs.vscode-mdx"
+  ]
+}

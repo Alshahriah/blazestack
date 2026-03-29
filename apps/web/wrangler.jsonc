@@ -1,0 +1,9 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "erh-web",
+  "compatibility_date": "2025-04-04",
+  "main": "./workers/app.ts",
+  "vars": {
+    "API_URL": "http://localhost:8787"
+  }
+}

@@ -1,0 +1,28 @@
+{
+  "name": "@erh/db",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./schema": "./src/schema/index.ts",
+    "./client": "./src/client.ts"
+  },
+  "scripts": {
+    "setup": "bun run src/setup.ts",
+    "generate": "drizzle-kit generate",
+    "migrate": "bun run src/migrate.ts",
+    "seed": "bun run src/seed.ts",
+    "studio": "drizzle-kit studio",
+    "push": "drizzle-kit push"
+  },
+  "dependencies": {
+    "dotenv": "^17.3.1",
+    "drizzle-orm": "^0.44.1",
+    "postgres": "^3.4.5"
+  },
+  "devDependencies": {
+    "drizzle-kit": "^0.31.1",
+    "typescript": "^5.7.3"
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "name": "@erh/env",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./api": "./src/api.ts",
+    "./web": "./src/web.ts",
+    "./db": "./src/db.ts"
+  },
+  "dependencies": {
+    "@t3-oss/env-core": "^0.13.4",
+    "zod": "^3.24.1"
+  },
+  "devDependencies": {
+    "typescript": "^5.7.3"
+  }
+}

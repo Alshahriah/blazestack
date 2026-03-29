@@ -1,0 +1,17 @@
+name = "erh-api"
+main = "src/index.ts"
+compatibility_date = "2025-01-01"
+compatibility_flags = ["nodejs_compat"]
+
+[vars]
+NODE_ENV = "production"
+BETTER_AUTH_URL = "https://erh-api.your-subdomain.workers.dev"
+
+# Secrets — set via: wrangler secret put DATABASE_URL
+# DATABASE_URL=
+# BETTER_AUTH_SECRET=
+
+# Cloudflare Hyperdrive for PostgreSQL connection pooling
+# [[hyperdrive]]
+# binding = "HYPERDRIVE"
+# id = "your-hyperdrive-id"

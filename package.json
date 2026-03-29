@@ -17,6 +17,7 @@
     "lint": "biome ci .",
     "lint:fix": "biome check --write .",
     "typecheck": "tsc --noEmit -p tsconfig.base.json",
+    "docs:sync": "bun run --cwd docs/site sync",
     "docs:dev": "bun run --cwd docs/site dev",
     "docs:build": "bun run --cwd docs/site build",
     "docs:preview": "bun run --cwd docs/site preview",

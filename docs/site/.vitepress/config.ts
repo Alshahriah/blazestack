@@ -3,9 +3,8 @@ import { defineConfig } from "vitepress";
 export default defineConfig({
   title: "blazestack",
   description: "Blazing fast full-stack apps. Ship web, API, and mobile from one repo.",
-  srcDir: "..",
-  srcExclude: ["site/**"],
-  outDir: "../dist",
+  outDir: "./dist",
+  ignoreDeadLinks: true,
 
   head: [
     ["link", { rel: "icon", href: "/favicon.ico" }],

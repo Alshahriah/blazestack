@@ -4,9 +4,9 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "sync": "bun run sync-docs.ts",
-    "dev": "bun run sync-docs.ts && vitepress dev",
-    "build": "bun run sync-docs.ts && vitepress build",
+    "sync": "node sync-docs.mjs",
+    "dev": "node sync-docs.mjs && vitepress dev",
+    "build": "node sync-docs.mjs && vitepress build",
     "preview": "vitepress preview"
   },
   "devDependencies": {

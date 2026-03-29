@@ -43,7 +43,6 @@ blazestack/
 │   ├── trpc/         tRPC v11 router — shared across API consumers
 │   └── ui/           Shared components: web (Tailwind) + native (StyleSheet)
 ├── .github/
-│   ├── workflows/ci.yml          Lint + typecheck + deploy on push
 │   ├── ISSUE_TEMPLATE/           Bug report + feature request templates
 │   └── pull_request_template.md
 ├── biome.json        Formatter + linter config
@@ -574,20 +573,14 @@ Cloudflare Workers have a short-lived execution model. For PostgreSQL, use [Hype
 
 ## CI/CD
 
-GitHub Actions workflow at `.github/workflows/ci.yml`:
+No CI/CD workflow is included in this template. Deploy manually using the commands in the [Deploying](#deploying) section.
 
-| Trigger | Job | What it does |
-|---|---|---|
-| Push / PR to `main` or `dev` | `lint-typecheck` | `biome ci` + `tsc --noEmit` on all packages |
-| Push to `main` | `deploy` | Deploy API + web to Cloudflare Workers |
+If you want to add GitHub Actions, create `.github/workflows/ci.yml` with your own pipeline. A minimal setup would:
 
-### Required GitHub secrets
-
-Set these in **Settings → Secrets and variables → Actions**:
-
-| Secret | Description |
-|---|---|
-| `CLOUDFLARE_API_TOKEN` | Wrangler deploy token — create at dash.cloudflare.com/profile/api-tokens with "Edit Cloudflare Workers" template |
+1. Run `bun install`
+2. Run `bun lint` (Biome)
+3. Run `tsc --noEmit` across packages
+4. Deploy via `wrangler deploy` using a `CLOUDFLARE_API_TOKEN` secret
 
 ---
 

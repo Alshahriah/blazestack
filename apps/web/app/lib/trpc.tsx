@@ -1,4 +1,4 @@
-import type { AppRouter } from "@erh/trpc";
+import type { AppRouter } from "@blazestack/trpc";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { createTRPCClient, httpBatchLink } from "@trpc/client";
 import { createTRPCReact } from "@trpc/react-query";

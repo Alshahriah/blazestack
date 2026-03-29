@@ -1,5 +1,5 @@
 {
-  "name": "@erh/auth",
+  "name": "@blazestack/auth",
   "version": "0.0.0",
   "private": true,
   "type": "module",
@@ -9,7 +9,7 @@
     "./server": "./src/server.ts"
   },
   "dependencies": {
-    "@erh/db": "workspace:*",
+    "@blazestack/db": "workspace:*",
     "better-auth": "^1.2.7"
   },
   "devDependencies": {

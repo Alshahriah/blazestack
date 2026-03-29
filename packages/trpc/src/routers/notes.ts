@@ -1,4 +1,4 @@
-import { notes } from "@erh/db";
+import { notes } from "@blazestack/db";
 import { TRPCError } from "@trpc/server";
 import { and, desc, eq } from "drizzle-orm";
 import { protectedProcedure, router, z } from "../trpc";

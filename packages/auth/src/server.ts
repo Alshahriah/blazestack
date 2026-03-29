@@ -1,4 +1,4 @@
-import type { DB } from "@erh/db";
+import type { DB } from "@blazestack/db";
 import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 

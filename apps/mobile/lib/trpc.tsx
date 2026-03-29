@@ -1,7 +1,7 @@
 import { createTRPCClient, httpBatchLink } from "@trpc/client";
 import { createTRPCReact } from "@trpc/react-query";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import type { AppRouter } from "@erh/trpc";
+import type { AppRouter } from "@blazestack/trpc";
 import { useState } from "react";
 
 // Android emulator uses 10.0.2.2 to reach host localhost.
@@ -10,7 +10,7 @@ import { Platform } from "react-native";
 const DEV_HOST = Platform.OS === "android" ? "10.0.2.2" : "localhost";
 const API_URL = __DEV__
   ? `http://${DEV_HOST}:8787`
-  : "https://erh-api.your-subdomain.workers.dev";
+  : "https://blazestack-api.your-subdomain.workers.dev";
 
 export const trpc = createTRPCReact<AppRouter>();
 

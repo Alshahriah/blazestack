@@ -1,4 +1,4 @@
-# Contributing to erh-cf
+# Contributing to blazestack
 
 Thank you for your interest in contributing.
 
@@ -11,8 +11,8 @@ Thank you for your interest in contributing.
 ## Setup
 
 ```bash
-git clone https://github.com/your-org/erh-cf.git
-cd erh-cf
+git clone https://github.com/your-org/blazestack.git
+cd blazestack
 bun install
 bunx lefthook install
 cp apps/api/.dev.vars.example apps/api/.dev.vars

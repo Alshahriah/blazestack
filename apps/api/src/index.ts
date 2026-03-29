@@ -1,6 +1,6 @@
-import { createAuth } from "@erh/auth/server";
-import { createDb } from "@erh/db";
-import { appRouter } from "@erh/trpc/server";
+import { createAuth } from "@blazestack/auth/server";
+import { createDb } from "@blazestack/db";
+import { appRouter } from "@blazestack/trpc/server";
 import { trpcServer } from "@hono/trpc-server";
 import { Hono } from "hono";
 import { cors } from "hono/cors";

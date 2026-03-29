@@ -1,5 +1,5 @@
 {
-  "name": "@erh/trpc",
+  "name": "@blazestack/trpc",
   "version": "0.0.0",
   "private": true,
   "type": "module",
@@ -9,7 +9,7 @@
     "./server": "./src/server.ts"
   },
   "dependencies": {
-    "@erh/db": "workspace:*",
+    "@blazestack/db": "workspace:*",
     "@trpc/server": "^11.1.0",
     "@trpc/client": "^11.1.0",
     "drizzle-orm": "^0.44.1",

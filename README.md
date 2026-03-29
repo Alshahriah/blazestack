@@ -1,4 +1,4 @@
-# erh-cf
+# blazestack
 
 A full-stack Bun monorepo template with end-to-end type safety across web, API, and mobile.
 
@@ -28,7 +28,7 @@ A full-stack Bun monorepo template with end-to-end type safety across web, API, 
 ## Architecture
 
 ```
-erh-cf/
+blazestack/
 ├── apps/
 │   ├── api/          Hono server — Cloudflare Workers
 │   │                 Better Auth + tRPC endpoints
@@ -80,9 +80,9 @@ Browser / Mobile app
 
 > **PostgreSQL via Docker** — quickest option:
 > ```bash
-> docker run -d --name erh-pg -e POSTGRES_PASSWORD=postgres -p 5432:5432 postgres:16
+> docker run -d --name blazestack-pg -e POSTGRES_PASSWORD=postgres -p 5432:5432 postgres:16
 > ```
-> Then set `DATABASE_URL=postgresql://postgres:postgres@localhost:5432/erh_db`.
+> Then set `DATABASE_URL=postgresql://postgres:postgres@localhost:5432/blazestack_db`.
 
 ---
 
@@ -90,8 +90,8 @@ Browser / Mobile app
 
 ```bash
 # 1. Clone
-git clone https://github.com/your-org/erh-cf.git
-cd erh-cf
+git clone https://github.com/your-org/blazestack.git
+cd blazestack
 
 # 2. Install all dependencies (all workspaces)
 bun install
@@ -135,7 +135,7 @@ cp apps/api/.dev.vars.example apps/api/.dev.vars
 
 | Variable | Required | Example | Description |
 |---|---|---|---|
-| `DATABASE_URL` | Yes | `postgresql://user:pass@localhost:5432/erh_db` | Postgres connection string |
+| `DATABASE_URL` | Yes | `postgresql://user:pass@localhost:5432/blazestack_db` | Postgres connection string |
 | `BETTER_AUTH_SECRET` | Yes | `openssl rand -hex 32` | Random 32+ character secret for signing sessions |
 | `BETTER_AUTH_URL` | Yes | `http://localhost:8787` | Base URL of the API (used by Better Auth for callbacks) |
 | `NODE_ENV` | No | `development` | Defaults to `development` |
@@ -159,7 +159,7 @@ The API URL is set in `apps/mobile/lib/trpc.tsx` and `apps/mobile/lib/auth-clien
 
 The `bun db:*` scripts automatically load `packages/db/.env` via `dotenv`. Create it:
 ```
-DATABASE_URL=postgresql://user:pass@localhost:5432/erh_db
+DATABASE_URL=postgresql://user:pass@localhost:5432/blazestack_db
 ```
 This file is gitignored. Alternatively, export `DATABASE_URL` in your shell before running the scripts.
 
@@ -247,7 +247,7 @@ Expo Go works over LAN. Update the `API_URL` in both mobile files to your machin
 ```ts
 // apps/mobile/lib/trpc.tsx
 // apps/mobile/lib/auth-client.ts
-const API_URL = __DEV__ ? "http://192.168.1.x:8787" : "https://erh-api.your-subdomain.workers.dev";
+const API_URL = __DEV__ ? "http://192.168.1.x:8787" : "https://blazestack-api.your-subdomain.workers.dev";
 ```
 
 ### Port reference
@@ -440,54 +440,54 @@ route("posts", "routes/posts.tsx"),
 
 ## Packages
 
-### `@erh/db`
+### `@blazestack/db`
 
 Drizzle ORM schema and database client.
 
 ```ts
-import { createDb, notes, user } from "@erh/db";
+import { createDb, notes, user } from "@blazestack/db";
 
 const db = createDb(process.env.DATABASE_URL);
 const rows = await db.select().from(notes);
 ```
 
-### `@erh/trpc`
+### `@blazestack/trpc`
 
 tRPC router, types, and utilities.
 
 ```ts
-import { appRouter, type AppRouter } from "@erh/trpc";
-import { createId } from "@erh/trpc/utils"; // tiny collision-resistant ID — used for generating note/record IDs
+import { appRouter, type AppRouter } from "@blazestack/trpc";
+import { createId } from "@blazestack/trpc/utils"; // tiny collision-resistant ID — used for generating note/record IDs
 ```
 
 `createId()` generates a sortable, URL-safe ID from `Date.now() + Math.random()`. Suitable for low-throughput apps. Replace with `nanoid` or `uuidv7` for high-concurrency scenarios.
 
-### `@erh/auth`
+### `@blazestack/auth`
 
 Better Auth factory.
 
 ```ts
-import { createAuth } from "@erh/auth/server";
-import { createClient } from "@erh/auth"; // vanilla client for non-React contexts
+import { createAuth } from "@blazestack/auth/server";
+import { createClient } from "@blazestack/auth"; // vanilla client for non-React contexts
 ```
 
-### `@erh/env`
+### `@blazestack/env`
 
 T3-style Zod-validated env. Throws at startup if required vars are missing.
 
 ```ts
-import { dbEnv } from "@erh/env";        // DATABASE_URL
-import { createApiEnv } from "@erh/env"; // Cloudflare Workers (pass c.env)
-import { webEnv } from "@erh/env";       // Vite/web
+import { dbEnv } from "@blazestack/env";        // DATABASE_URL
+import { createApiEnv } from "@blazestack/env"; // Cloudflare Workers (pass c.env)
+import { webEnv } from "@blazestack/env";       // Vite/web
 ```
 
-### `@erh/ui`
+### `@blazestack/ui`
 
 Shared components.
 
 ```ts
-import { Button, Input, Card } from "@erh/ui/web";    // React + Tailwind
-import { Button, Input, Card } from "@erh/ui/native"; // React Native
+import { Button, Input, Card } from "@blazestack/ui/web";    // React + Tailwind
+import { Button, Input, Card } from "@blazestack/ui/native"; // React Native
 ```
 
 ---
@@ -614,7 +614,7 @@ On a physical device or simulator, `localhost` doesn't resolve to your dev machi
 ### `bun db:generate` produces no changes
 Drizzle compares against the last generated migration. If the `drizzle/` folder is missing, it will generate all tables from scratch — this is expected on first run.
 
-### `Could not find module '@erh/...'`
+### `Could not find module '@blazestack/...'`
 Run `bun install` from the repo root. Bun workspaces symlink packages into `node_modules` — if the symlinks are missing, reinstalling fixes it.
 
 ### Cloudflare Worker `Cannot read properties of undefined` at startup

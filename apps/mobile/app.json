@@ -10,10 +10,10 @@
     "newArchEnabled": true,
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.erh.app"
+      "bundleIdentifier": "com.blazestack.app"
     },
     "android": {
-      "package": "com.erh.app",
+      "package": "com.blazestack.app",
       "adaptiveIcon": {
         "backgroundColor": "#E6F4FE",
         "foregroundImage": "./assets/images/android-icon-foreground.png",

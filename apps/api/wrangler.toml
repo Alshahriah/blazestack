@@ -1,11 +1,11 @@
-name = "erh-api"
+name = "blazestack-api"
 main = "src/index.ts"
 compatibility_date = "2025-01-01"
 compatibility_flags = ["nodejs_compat"]
 
 [vars]
 NODE_ENV = "production"
-BETTER_AUTH_URL = "https://erh-api.your-subdomain.workers.dev"
+BETTER_AUTH_URL = "https://blazestack-api.your-subdomain.workers.dev"
 
 # Secrets — set via: wrangler secret put DATABASE_URL
 # DATABASE_URL=

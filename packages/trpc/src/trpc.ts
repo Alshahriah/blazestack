@@ -1,4 +1,4 @@
-import type { DB } from "@erh/db";
+import type { DB } from "@blazestack/db";
 import { TRPCError, initTRPC } from "@trpc/server";
 import { z } from "zod";
 

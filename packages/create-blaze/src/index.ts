@@ -11,16 +11,17 @@ import {
 import { get } from "node:https";
 import { tmpdir } from "node:os";
 import { basename, extname, join } from "node:path";
+import kleur from "kleur";
 import { extract } from "tar";
 
 const REPO_OWNER = "Alshahriah";
 const REPO_NAME = "blazestack";
 const REPO_BRANCH = "main";
+const VERSION = "0.2.0";
 
-// Files/dirs to exclude from the scaffolded project
 const EXCLUDE = new Set(["node_modules", ".git", "bun.lock", "packages/create-blaze"]);
+const EXCLUDE_FILES = new Set([".github/workflows/publish.yml"]);
 
-// Extensions that are safe to do text replacement on
 const TEXT_EXTENSIONS = new Set([
   ".ts",
   ".tsx",
@@ -43,7 +44,6 @@ const TEXT_EXTENSIONS = new Set([
 function isTextFile(filePath: string): boolean {
   const ext = extname(filePath);
   const base = basename(filePath);
-  // Handle extensionless dotfiles like .env.example, .dev.vars.example
   if (ext === "" || base.startsWith(".")) return true;
   return TEXT_EXTENSIONS.has(ext);
 }
@@ -60,7 +60,6 @@ function toDbName(name: string): string {
 }
 
 function toBundleId(name: string): string {
-  // com.my-app.app -> com.myapp.app (dots and alphanumeric only)
   const safe = name.replace(/-/g, "");
   return `com.${safe}.app`;
 }
@@ -86,28 +85,29 @@ function replaceTokens(content: string, name: string): string {
 
 function shouldExclude(relPath: string): boolean {
   const parts = relPath.split(/[\/\\]/);
-  // Exclude top-level entries in EXCLUDE set
   if (EXCLUDE.has(parts[0])) return true;
-  // Exclude packages/create-blaze specifically
   if (parts[0] === "packages" && parts[1] === "create-blaze") return true;
+  const normalized = relPath.replace(/\\/g, "/");
+  if (EXCLUDE_FILES.has(normalized)) return true;
   return false;
 }
 
-function copyDir(src: string, dest: string, name: string) {
+function copyDir(src: string, dest: string, name: string, relBase = "") {
   mkdirSync(dest, { recursive: true });
   const entries = readdirSync(src);
   for (const entry of entries) {
     const srcPath = join(src, entry);
     const destPath = join(dest, entry);
+    const relPath = relBase ? `${relBase}/${entry}` : entry;
+    if (EXCLUDE_FILES.has(relPath)) continue;
     const stat = statSync(srcPath);
     if (stat.isDirectory()) {
-      copyDir(srcPath, destPath, name);
+      copyDir(srcPath, destPath, name, relPath);
     } else {
       if (isTextFile(srcPath)) {
         const content = readFileSync(srcPath, "utf8");
         writeFileSync(destPath, replaceTokens(content, name), "utf8");
       } else {
-        // Binary file — copy as-is
         const buf = readFileSync(srcPath);
         writeFileSync(destPath, buf);
       }
@@ -145,6 +145,18 @@ function dirExists(p: string): boolean {
   }
 }
 
+function step(label: string) {
+  process.stdout.write(`  ${kleur.cyan("◆")} ${label.padEnd(30)}`);
+}
+
+function stepDone() {
+  process.stdout.write(`${kleur.green("✓")}\n`);
+}
+
+function stepFail() {
+  process.stdout.write(`${kleur.red("✗")}\n`);
+}
+
 async function main() {
   const input = process.argv[2];
   const DEFAULT_NAME = "my-blazestack-app";
@@ -153,11 +165,11 @@ async function main() {
   const baseName = sanitizeName(rawName);
 
   if (!baseName) {
-    console.error(`Invalid project name: "${rawName}"`);
+    console.error(kleur.red(`\n  Invalid project name: "${rawName}"\n`));
     process.exit(1);
   }
 
-  // If directory exists, append incrementing number
+  // Auto-increment if directory exists
   let safeName = baseName;
   let counter = 1;
   while (dirExists(join(process.cwd(), safeName))) {
@@ -165,32 +177,38 @@ async function main() {
     counter++;
   }
 
-  if (safeName !== baseName) {
-    console.log(`\n  "${baseName}" already exists — using "${safeName}" instead.`);
-  }
-
   const targetDir = join(process.cwd(), safeName);
-
   const tarUrl = `https://codeload.github.com/${REPO_OWNER}/${REPO_NAME}/tar.gz/refs/heads/${REPO_BRANCH}`;
   const tmpFile = join(tmpdir(), `create-blaze-${Date.now()}.tar.gz`);
   const tmpExtract = join(tmpdir(), `create-blaze-${Date.now()}`);
 
-  console.log(`\nCreating ${safeName}...\n`);
+  // Header
+  console.log();
+  console.log(`  ${kleur.bgCyan().black(` create-blaze v${VERSION} `)}`);
+  console.log();
+
+  if (safeName !== baseName) {
+    console.log(
+      `  ${kleur.yellow("!")} ${kleur.dim(`"${baseName}" already exists — using "${safeName}" instead.`)}`,
+    );
+    console.log();
+  }
+
+  console.log(`  Scaffolding ${kleur.cyan().bold(safeName)}...`);
+  console.log();
 
   try {
-    process.stdout.write("  Downloading template...");
+    step("Downloading template");
     await download(tarUrl, tmpFile);
-    console.log(" done");
+    stepDone();
 
-    process.stdout.write("  Extracting...");
+    step("Extracting");
     mkdirSync(tmpExtract, { recursive: true });
     await extract({ file: tmpFile, cwd: tmpExtract });
-    console.log(" done");
+    stepDone();
 
-    // GitHub tarballs extract to <repo>-<branch>/
+    step("Setting up project");
     const extractedRoot = join(tmpExtract, `${REPO_NAME}-${REPO_BRANCH}`);
-
-    process.stdout.write("  Scaffolding project...");
     mkdirSync(targetDir, { recursive: true });
 
     const entries = readdirSync(extractedRoot);
@@ -200,15 +218,14 @@ async function main() {
       const destPath = join(targetDir, entry);
       const stat = statSync(srcPath);
       if (stat.isDirectory()) {
-        // For packages dir, skip create-blaze subfolder
         if (entry === "packages") {
           mkdirSync(destPath, { recursive: true });
           for (const pkg of readdirSync(srcPath)) {
             if (pkg === "create-blaze") continue;
-            copyDir(join(srcPath, pkg), join(destPath, pkg), safeName);
+            copyDir(join(srcPath, pkg), join(destPath, pkg), safeName, `packages/${pkg}`);
           }
         } else {
-          copyDir(srcPath, destPath, safeName);
+          copyDir(srcPath, destPath, safeName, entry);
         }
       } else {
         if (isTextFile(srcPath)) {
@@ -219,9 +236,11 @@ async function main() {
         }
       }
     }
-    console.log(" done");
+    stepDone();
+  } catch (err) {
+    stepFail();
+    throw err;
   } finally {
-    // Cleanup temp files
     try {
       rmSync(tmpFile, { force: true });
     } catch {}
@@ -230,20 +249,27 @@ async function main() {
     } catch {}
   }
 
-  console.log(`
-  Done! Next steps:
-
-    cd ${safeName}
-    bun install
-    cp apps/api/.dev.vars.example apps/api/.dev.vars
-    # Edit apps/api/.dev.vars with your DATABASE_URL and BETTER_AUTH_SECRET
-    bun db:setup && bun db:generate && bun db:migrate
-    bun dev:api    # terminal 1 — API on http://localhost:8787
-    bun dev:web    # terminal 2 — web on http://localhost:5173
-`);
+  console.log();
+  console.log(`  ${kleur.green().bold("Ready!")} Your project is set up.`);
+  console.log();
+  console.log(`  ${kleur.dim("Next steps:")}`);
+  console.log();
+  console.log(`    ${kleur.yellow(`cd ${safeName}`)}`);
+  console.log(`    ${kleur.yellow("bun install")}`);
+  console.log(`    ${kleur.yellow("cp apps/api/.dev.vars.example apps/api/.dev.vars")}`);
+  console.log(`    ${kleur.dim("# add DATABASE_URL + BETTER_AUTH_SECRET to .dev.vars")}`);
+  console.log(`    ${kleur.yellow("bun db:setup && bun db:generate && bun db:migrate")}`);
+  console.log();
+  console.log(
+    `    ${kleur.yellow("bun dev:api")}  ${kleur.dim("─")}  ${kleur.dim("API")}  ${kleur.dim("→")}  ${kleur.cyan("http://localhost:8787")}`,
+  );
+  console.log(
+    `    ${kleur.yellow("bun dev:web")}  ${kleur.dim("─")}  ${kleur.dim("Web")}  ${kleur.dim("→")}  ${kleur.cyan("http://localhost:5173")}`,
+  );
+  console.log();
 }
 
 main().catch((err) => {
-  console.error("\nError:", err.message);
+  console.error(`\n  ${kleur.red("Error:")} ${err.message}\n`);
   process.exit(1);
 });

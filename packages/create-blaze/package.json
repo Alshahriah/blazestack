@@ -1,24 +1,34 @@
 {
   "name": "create-blaze",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Create a new blazestack project",
-  "keywords": ["blazestack", "create-blaze", "hono", "trpc", "drizzle", "better-auth", "expo", "cloudflare"],
+  "keywords": [
+    "blazestack",
+    "create-blaze",
+    "hono",
+    "trpc",
+    "drizzle",
+    "better-auth",
+    "expo",
+    "cloudflare"
+  ],
   "homepage": "https://github.com/Alshahriah/blazestack",
   "repository": {
     "type": "git",
-    "url": "https://github.com/Alshahriah/blazestack.git",
+    "url": "git+https://github.com/Alshahriah/blazestack.git",
     "directory": "packages/create-blaze"
   },
   "license": "MIT",
   "type": "module",
   "bin": {
-    "create-blaze": "./dist/index.js"
+    "create-blaze": "dist/index.js"
   },
   "scripts": {
     "build": "bun build src/index.ts --outdir dist --target node --format esm",
     "dev": "bun run src/index.ts"
   },
   "dependencies": {
+    "kleur": "^4.1.5",
     "tar": "^7.4.3"
   },
   "devDependencies": {
